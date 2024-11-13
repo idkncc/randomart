@@ -1,4 +1,5 @@
 mod branches;
+mod eval;
 mod nodes;
 
 use branches::{print_grammar, Grammar, GrammarBranch};

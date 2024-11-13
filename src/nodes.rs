@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub enum Node {
     X,
     Y,
@@ -19,21 +20,25 @@ pub enum Node {
     If(If),
 }
 
+#[derive(Debug, Clone)]
 pub struct Unop {
     pub value: Box<Node>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Binop {
     pub lhs: Box<Node>,
     pub rhs: Box<Node>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Triple {
     pub first: Box<Node>,
     pub second: Box<Node>,
     pub third: Box<Node>,
 }
 
+#[derive(Debug, Clone)]
 pub struct If {
     pub cond: Box<Node>,
     pub then: Box<Node>,
@@ -198,4 +203,12 @@ macro_rules! node_triple {
             third: $c,
         }))
     }};
+}
+
+/// Clones node
+#[macro_export]
+macro_rules! node_clone {
+    ($n:expr) => {
+        Box::new($n.clone())
+    };
 }
