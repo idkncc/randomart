@@ -1,6 +1,7 @@
 use crate::{
-    node_boolean, node_clone, node_number, node_triple,
+    expect_number, expect_triple, node_boolean, node_clone, node_number, node_triple,
     nodes::{self, Node},
+    utils::Color,
 };
 use rand::prelude::*;
 
@@ -86,6 +87,16 @@ pub fn eval_node(node: &Node, x: f32, y: f32, t: f32) -> Box<Node> {
             }
         }
     }
+}
+
+/// Evals node, but expects it to return `Node::Triple` to set as `Color`
+pub fn eval_func(node: &Node, x: f32, y: f32, t: f32, color: &mut Color) {
+    let node = eval_node(node, x, y, t);
+
+    let triple = expect_triple!(node);
+    color.r = expect_number!(triple.first);
+    color.g = expect_number!(triple.second);
+    color.b = expect_number!(triple.third);
 }
 
 #[cfg(test)]

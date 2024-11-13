@@ -205,6 +205,41 @@ macro_rules! node_triple {
     }};
 }
 
+// - Expect macros
+
+#[macro_export]
+macro_rules! expect_number {
+    ($n:expr) => {{
+        if let nodes::Node::Number(value) = $n.as_ref() {
+            value.clone()
+        } else {
+            panic!("Expected node to be number")
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! expect_boolean {
+    ($n:expr) => {{
+        if let nodes::Node::Boolean(value) = $n.as_ref() {
+            value.clone()
+        } else {
+            panic!("Expected node to be boolean")
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! expect_triple {
+    ($n:expr) => {{
+        if let nodes::Node::Triple(triple) = $n.as_ref() {
+            triple
+        } else {
+            panic!("Expected node to be triple")
+        }
+    }};
+}
+
 /// Clones node
 #[macro_export]
 macro_rules! node_clone {
