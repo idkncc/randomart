@@ -7,6 +7,7 @@ mod utils;
 use branches::{print_grammar, Grammar, GrammarBranch};
 use eval::eval_func;
 use gen::gen_rule;
+use indicatif::ProgressBar;
 use nodes::{print_node, Node};
 use utils::Color;
 
@@ -61,15 +62,15 @@ fn generate_grammar() -> Grammar {
     {
         let mut branches: Vec<GrammarBranch> = vec![];
 
-        branches.push(GrammarBranch::new(node_rule!(A), 1.0 / 3.0));
+        branches.push(GrammarBranch::new(node_rule!(A), 1.0 / 4.0));
 
         branches.push(GrammarBranch::new(
             node_add!(node_rule!(C), node_rule!(C)),
-            1.0 / 5.0,
+            3.0 / 8.0,
         ));
         branches.push(GrammarBranch::new(
             node_mult!(node_rule!(C), node_rule!(C)),
-            1.0 / 5.0,
+            3.0 / 8.0,
         ));
 
         grammar.push(branches);
@@ -82,6 +83,7 @@ fn create_image(f: &Node, width: u32, height: u32) {
     // Create a new ImgBuf with width: imgx and height: imgy
     let mut imgbuf = image::ImageBuffer::new(width, height);
 
+    let bar = ProgressBar::new((width * height) as u64);
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
         let nx = ((x as f32) / (width as f32)) * 2.0 - 1.0;
         let ny = ((y as f32) / (height as f32)) * 2.0 - 1.0;
@@ -90,6 +92,8 @@ fn create_image(f: &Node, width: u32, height: u32) {
         eval_func(f, nx, ny, 0.0, &mut color);
 
         *pixel = image::Rgb(color.to_u8());
+
+        bar.inc(1);
     }
 
     imgbuf.save("randomart.png").unwrap();
@@ -100,17 +104,14 @@ fn main() {
 
     let grammar = generate_grammar();
 
+    println!("Grammar:");
     print_grammar(&grammar);
+
     let Some(f) = gen_rule(&grammar, 0, 40) else {
         panic!("Couldn't generate grammar")
     };
 
-    // print_node(&f);
-    // let f = node_triple!(
-    // node_mult!(node_x!(), node_y!()),
-    // node_add!(node_x!(), node_y!()),
-    // node_mod!(node_x!(), node_y!())
-    // );
+    println!("Generating image...");
 
     create_image(&f, 400, 400);
 }
