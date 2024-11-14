@@ -22,12 +22,12 @@ pub fn compile_fragment_expression(node: &Node) -> String {
             format!("sqrt({})", compile_fragment_expression(&unop.value))
         }
         Node::Add(binop) => format!(
-            "({}+({}))",
+            "({}+{})",
             compile_fragment_expression(&binop.lhs),
             compile_fragment_expression(&binop.rhs)
         ),
         Node::Mult(binop) => format!(
-            "({}*({}))",
+            "({}*{})",
             compile_fragment_expression(&binop.lhs),
             compile_fragment_expression(&binop.rhs)
         ),
