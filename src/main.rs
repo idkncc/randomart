@@ -1,10 +1,12 @@
 mod branches;
+mod compile;
 mod eval;
 mod gen;
 mod nodes;
 mod utils;
 
 use branches::{print_grammar, Grammar, GrammarBranch};
+use compile::compile_fragment_expression;
 use eval::eval_func;
 use gen::gen_rule;
 use indicatif::ProgressBar;
@@ -113,5 +115,6 @@ fn main() {
 
     println!("Generating image...");
 
-    create_image(&f, 400, 400);
+    // create_image(&f, 400, 400);
+    println!("{}", compile_fragment_expression(&f))
 }
