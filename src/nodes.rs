@@ -205,6 +205,17 @@ macro_rules! node_triple {
     }};
 }
 
+#[macro_export]
+macro_rules! node_if {
+    ($c:expr, $t:expr, $e:expr) => {{
+        Box::new(nodes::Node::If(nodes::If {
+            cond: $c,
+            then: $t,
+            elze: $e,
+        }))
+    }};
+}
+
 // - Expect macros
 
 #[macro_export]
