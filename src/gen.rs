@@ -2,23 +2,26 @@ use crate::{
     branches::Grammar,
     expect_number, node_add, node_clone, node_gt, node_if, node_mod, node_mult, node_number,
     node_sqrt, node_triple,
-    nodes::{self, Binop, Node, Unop},
+    nodes::{self, print_node, Binop, Node, Unop},
 };
 
 const GEN_RULE_MAX_ATTEMPTS: usize = 100;
 
-fn gen_rule(grammar: &Grammar, rule: usize, depth: i32) -> Option<Box<Node>> {
+pub fn gen_rule(grammar: &Grammar, rule: usize, depth: i32) -> Option<Box<Node>> {
     if depth <= 0 {
-        panic!("Exceeded depth");
+        return None;
     }
 
     assert!(rule < grammar.len());
 
     let branches = grammar.get(rule).unwrap();
 
-    let mut node: Option<Box<Node>> = None;
-
+    let mut node = None;
     for attempts in 0..GEN_RULE_MAX_ATTEMPTS {
+        if node.is_some() {
+            break;
+        }
+
         // [0......][...][...1]
         let p: f32 = rand::random();
         let mut t = 0.0;
@@ -26,59 +29,92 @@ fn gen_rule(grammar: &Grammar, rule: usize, depth: i32) -> Option<Box<Node>> {
         for branch in branches {
             t += branch.probability;
             if t >= p {
-                node = Some(gen_node(grammar, branch.node.as_ref(), depth - 1));
+                node = gen_node(grammar, branch.node.as_ref(), depth - 1);
                 break;
             }
         }
     }
-
     node
 }
 
-fn gen_node(grammar: &Grammar, node: &Node, depth: i32) -> Box<Node> {
+pub fn gen_node(grammar: &Grammar, node: &Node, depth: i32) -> Option<Box<Node>> {
     match node {
-        Node::X | Node::Y | Node::T | Node::Number(_) | Node::Boolean(_) => node_clone!(node),
-        Node::Random => node_number!(rand::random::<f32>() * 2.0 - 1.0),
-        Node::Rule(rule) => gen_rule(grammar, rule.clone(), depth - 1).unwrap(),
-        Node::Sqrt(unop) => node_sqrt!(gen_node(grammar, &unop.value, depth)),
-        Node::Add(binop) => {
-            let lhs = gen_node(grammar, &binop.lhs, depth);
-            let rhs = gen_node(grammar, &binop.rhs, depth);
+        Node::X | Node::Y | Node::T | Node::Number(_) | Node::Boolean(_) => Some(node_clone!(node)),
+        Node::Random => Some(node_number!(rand::random::<f32>() * 2.0 - 1.0)),
+        Node::Rule(rule) => gen_rule(grammar, rule.clone(), depth - 1),
+        Node::Sqrt(unop) => {
+            let Some(value) = gen_node(grammar, &unop.value, depth) else {
+                return None;
+            };
 
-            node_add!(lhs, rhs)
+            Some(node_sqrt!(value))
+        }
+        Node::Add(binop) => {
+            let Some(lhs) = gen_node(grammar, &binop.lhs, depth) else {
+                return None;
+            };
+            let Some(rhs) = gen_node(grammar, &binop.rhs, depth) else {
+                return None;
+            };
+
+            Some(node_add!(lhs, rhs))
         }
         Node::Mult(binop) => {
-            let lhs = gen_node(grammar, &binop.lhs, depth);
-            let rhs = gen_node(grammar, &binop.rhs, depth);
+            let Some(lhs) = gen_node(grammar, &binop.lhs, depth) else {
+                return None;
+            };
+            let Some(rhs) = gen_node(grammar, &binop.rhs, depth) else {
+                return None;
+            };
 
-            node_mult!(lhs, rhs)
+            Some(node_mult!(lhs, rhs))
         }
         Node::Mod(binop) => {
-            let lhs = gen_node(grammar, &binop.lhs, depth);
-            let rhs = gen_node(grammar, &binop.rhs, depth);
+            let Some(lhs) = gen_node(grammar, &binop.lhs, depth) else {
+                return None;
+            };
+            let Some(rhs) = gen_node(grammar, &binop.rhs, depth) else {
+                return None;
+            };
 
-            node_mod!(lhs, rhs)
+            Some(node_mod!(lhs, rhs))
         }
         Node::Gt(binop) => {
-            let lhs = gen_node(grammar, &binop.lhs, depth);
-            let rhs = gen_node(grammar, &binop.rhs, depth);
+            let Some(lhs) = gen_node(grammar, &binop.lhs, depth) else {
+                return None;
+            };
+            let Some(rhs) = gen_node(grammar, &binop.rhs, depth) else {
+                return None;
+            };
 
-            node_gt!(lhs, rhs)
+            Some(node_gt!(lhs, rhs))
         }
 
         Node::Triple(triple) => {
-            let first = gen_node(grammar, &triple.first, depth);
-            let second = gen_node(grammar, &triple.second, depth);
-            let third = gen_node(grammar, &triple.third, depth);
+            let Some(first) = gen_node(grammar, &triple.first, depth) else {
+                return None;
+            };
+            let Some(second) = gen_node(grammar, &triple.second, depth) else {
+                return None;
+            };
+            let Some(third) = gen_node(grammar, &triple.third, depth) else {
+                return None;
+            };
 
-            node_triple!(first, second, third)
+            Some(node_triple!(first, second, third))
         }
         Node::If(iff) => {
-            let cond = gen_node(grammar, &iff.cond, depth);
-            let then = gen_node(grammar, &iff.then, depth);
-            let elze = gen_node(grammar, &iff.elze, depth);
+            let Some(cond) = gen_node(grammar, &iff.cond, depth) else {
+                return None;
+            };
+            let Some(then) = gen_node(grammar, &iff.then, depth) else {
+                return None;
+            };
+            let Some(elze) = gen_node(grammar, &iff.elze, depth) else {
+                return None;
+            };
 
-            node_if!(cond, then, elze)
+            Some(node_if!(cond, then, elze))
         }
     }
 }

@@ -3,7 +3,6 @@ use crate::{
     nodes::{self, Node},
     utils::Color,
 };
-use rand::prelude::*;
 
 pub fn eval_node(node: &Node, x: f32, y: f32, t: f32) -> Box<Node> {
     match node {

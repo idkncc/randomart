@@ -5,6 +5,10 @@ mod nodes;
 mod utils;
 
 use branches::{print_grammar, Grammar, GrammarBranch};
+use eval::eval_func;
+use gen::gen_rule;
+use nodes::{print_node, Node};
+use utils::Color;
 
 fn generate_grammar() -> Grammar {
     const E: usize = 0usize;
@@ -33,7 +37,7 @@ fn generate_grammar() -> Grammar {
 
         branches.push(GrammarBranch::new(node_y!(), 0f32));
 
-        branches.push(GrammarBranch::new(node_t!(), 0f32));
+        // branches.push(GrammarBranch::new(node_t!(), 0f32));
 
         branches.push(GrammarBranch::new(
             node_sqrt!(node_add!(
@@ -57,15 +61,15 @@ fn generate_grammar() -> Grammar {
     {
         let mut branches: Vec<GrammarBranch> = vec![];
 
-        branches.push(GrammarBranch::new(node_rule!(A), 1.0 / 4.0));
+        branches.push(GrammarBranch::new(node_rule!(A), 1.0 / 3.0));
 
         branches.push(GrammarBranch::new(
             node_add!(node_rule!(C), node_rule!(C)),
-            3.0 / 8.0,
+            1.0 / 5.0,
         ));
         branches.push(GrammarBranch::new(
             node_mult!(node_rule!(C), node_rule!(C)),
-            3.0 / 8.0,
+            1.0 / 5.0,
         ));
 
         grammar.push(branches);
@@ -74,7 +78,39 @@ fn generate_grammar() -> Grammar {
     return grammar;
 }
 
+fn create_image(f: &Node, width: u32, height: u32) {
+    // Create a new ImgBuf with width: imgx and height: imgy
+    let mut imgbuf = image::ImageBuffer::new(width, height);
+
+    for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
+        let nx = ((x as f32) / (width as f32)) * 2.0 - 1.0;
+        let ny = ((y as f32) / (height as f32)) * 2.0 - 1.0;
+
+        let mut color = Color::new(0.0, 0.0, 0.0);
+        eval_func(f, nx, ny, 0.0, &mut color);
+
+        *pixel = image::Rgb(color.to_u8());
+    }
+
+    imgbuf.save("randomart.png").unwrap();
+}
+
 fn main() {
+    rand::thread_rng();
+
     let grammar = generate_grammar();
+
     print_grammar(&grammar);
+    let Some(f) = gen_rule(&grammar, 0, 40) else {
+        panic!("Couldn't generate grammar")
+    };
+
+    // print_node(&f);
+    // let f = node_triple!(
+    // node_mult!(node_x!(), node_y!()),
+    // node_add!(node_x!(), node_y!()),
+    // node_mod!(node_x!(), node_y!())
+    // );
+
+    create_image(&f, 400, 400);
 }
