@@ -1,25 +1,45 @@
-mod branches;
-mod compile;
-mod eval;
-mod gen;
-mod nodes;
-mod utils;
+use crate::{macros::*, prelude::*};
 
-use branches::{print_grammar, Grammar, GrammarBranch};
-use compile::compile_fragment_expression;
-use eval::eval_func;
-use gen::gen_rule;
-use indicatif::ProgressBar;
-use nodes::{print_node, Node};
-use utils::Color;
+pub type Grammar = Vec<GrammarBranches>;
+pub type GrammarBranches = Vec<GrammarBranch>;
 
-fn generate_grammar() -> Grammar {
+pub struct GrammarBranch {
+    pub node: Box<Node>,
+    pub probability: f32,
+}
+
+impl GrammarBranch {
+    pub fn new(node: Box<Node>, probability: f32) -> Self {
+        Self { node, probability }
+    }
+}
+
+pub fn print_grammar(grammar: &Grammar) {
+    for (i, branches) in grammar.iter().enumerate() {
+        let declr = format!("{} ::= ", i);
+        println!("{}", declr);
+
+        for branch in branches {
+            print!("{}| ", " ".repeat(declr.len() - 2));
+            print_grammar_branch(branch);
+            println!()
+        }
+    }
+}
+
+pub fn print_grammar_branch(branch: &GrammarBranch) {
+    print_node(&branch.node);
+    print!(" [{:.0}%]", branch.probability * 100f32);
+}
+
+pub fn generate_grammar() -> (Grammar, usize) {
     const E: usize = 0usize;
     const A: usize = 1usize;
     const C: usize = 2usize;
 
     let mut grammar: Grammar = vec![];
 
+    // E ::=
     {
         let mut branches: Vec<GrammarBranch> = vec![];
 
@@ -31,6 +51,7 @@ fn generate_grammar() -> Grammar {
         grammar.push(branches);
     }
 
+    // A ::=
     {
         let mut branches: Vec<GrammarBranch> = vec![];
 
@@ -61,6 +82,7 @@ fn generate_grammar() -> Grammar {
         grammar.push(branches);
     }
 
+    // C ::=
     {
         let mut branches: Vec<GrammarBranch> = vec![];
 
@@ -78,43 +100,5 @@ fn generate_grammar() -> Grammar {
         grammar.push(branches);
     }
 
-    return grammar;
-}
-
-fn create_image(f: &Node, width: u32, height: u32) {
-    // Create a new ImgBuf with width: imgx and height: imgy
-    let mut imgbuf = image::ImageBuffer::new(width, height);
-
-    let bar = ProgressBar::new((width * height) as u64);
-    for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let nx = ((x as f32) / (width as f32)) * 2.0 - 1.0;
-        let ny = ((y as f32) / (height as f32)) * 2.0 - 1.0;
-
-        let mut color = Color::new(0.0, 0.0, 0.0);
-        eval_func(f, nx, ny, 0.0, &mut color);
-
-        *pixel = image::Rgb(color.to_u8());
-
-        bar.inc(1);
-    }
-
-    imgbuf.save("randomart.png").unwrap();
-}
-
-fn main() {
-    rand::thread_rng();
-
-    let grammar = generate_grammar();
-
-    println!("Grammar:");
-    print_grammar(&grammar);
-
-    let Some(f) = gen_rule(&grammar, 0, 40) else {
-        panic!("Couldn't generate grammar")
-    };
-
-    println!("Generating image...");
-
-    // create_image(&f, 400, 400);
-    println!("{}", compile_fragment_expression(&f))
+    return (grammar, E);
 }

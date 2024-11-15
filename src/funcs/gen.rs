@@ -1,9 +1,4 @@
-use crate::{
-    branches::Grammar,
-    expect_number, node_add, node_clone, node_gt, node_if, node_mod, node_mult, node_number,
-    node_sqrt, node_triple,
-    nodes::{self, print_node, Binop, Node, Unop},
-};
+use crate::{macros::*, prelude::*};
 
 const GEN_RULE_MAX_ATTEMPTS: usize = 100;
 
@@ -17,7 +12,7 @@ pub fn gen_rule(grammar: &Grammar, rule: usize, depth: i32) -> Option<Box<Node>>
     let branches = grammar.get(rule).unwrap();
 
     let mut node = None;
-    for attempts in 0..GEN_RULE_MAX_ATTEMPTS {
+    for _attempts in 0..GEN_RULE_MAX_ATTEMPTS {
         if node.is_some() {
             break;
         }

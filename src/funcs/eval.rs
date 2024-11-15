@@ -1,8 +1,4 @@
-use crate::{
-    expect_number, expect_triple, node_boolean, node_clone, node_number, node_triple,
-    nodes::{self, Node},
-    utils::Color,
-};
+use crate::{macros::*, prelude::*};
 
 pub fn eval_node(node: &Node, x: f32, y: f32, t: f32) -> Box<Node> {
     match node {

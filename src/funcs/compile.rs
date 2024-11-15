@@ -1,6 +1,6 @@
 //! Module for compiling GL
 
-use crate::nodes::Node;
+use crate::prelude::*;
 
 pub fn compile_fragment_expression(node: &Node) -> String {
     match node {

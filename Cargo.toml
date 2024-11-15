@@ -1,9 +1,21 @@
 [package]
 name = "randomart"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
+[lib]
+name = "randomart"
+path = "src/lib.rs"
+
+[[example]]
+name = "image-generation"
+
+[[example]]
+name = "compile-shader"
+
 [dependencies]
+rand = "0.8.5"
+
+[dev-dependencies]
 image = "0.25.5"
 indicatif = "0.17.9"
-rand = "0.8.5"
