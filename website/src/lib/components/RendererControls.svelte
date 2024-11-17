@@ -18,6 +18,20 @@
     import RenderResButton from "./RenderResButton.svelte";
 
     const threeEnv = getContext<ThreeEnv>("threeEnv");
+    let downloadDialogOpened = $state(false);
+
+    function keydown(event: KeyboardEvent) {
+        if (event.key === "r") {
+            event.preventDefault();
+            recompile();
+        } else if (event.key === "d") {
+            event.preventDefault();
+            downloadDialogOpened = true;
+        } else if (event.key === "p") {
+            event.preventDefault();
+            threeEnv.flags.stopAnimation = !threeEnv.flags.stopAnimation;
+        }
+    }
 
     function recompile() {
         const fragmentShader = randomart.compile_webgl_fragment_shader();
@@ -34,6 +48,8 @@
         });
     }
 </script>
+
+<svelte:window on:keydown={keydown} />
 
 <div class="controls">
     <div>
@@ -57,7 +73,10 @@
                 id="stop-animation"
                 bind:checked={threeEnv.flags.stopAnimation}
             />
-            <Label for="stop-animation">Stop animation</Label>
+            <Label for="stop-animation">
+                Pause
+                <Badge variant="kbd" class="rounded-sm px-1">p</Badge>
+            </Label>
         </div>
 
         <Card.Root
@@ -99,13 +118,16 @@
     <div class="flex-grow"></div>
 
     <div class="flex flex-col gap-2">
-        <Dialog.Root>
+        <Dialog.Root bind:open={downloadDialogOpened}>
             <Dialog.Trigger>
-                <Button variant="secondary" class="w-full">Download</Button>
+                <Button variant="secondary" class="w-full">
+                    Download
+                    <Badge variant="kbd" class="rounded-sm px-1">d</Badge>
+                </Button>
             </Dialog.Trigger>
             <Dialog.Content>
                 <Dialog.Header>
-                    <Dialog.Title>Save</Dialog.Title>
+                    <Dialog.Title>Download</Dialog.Title>
                     <Dialog.Description>
                         Select the resolution of render image
                     </Dialog.Description>
@@ -142,7 +164,10 @@
         <!-- variant="secondary" -->
         <!-- onclick={() => download(window.screen.width, window.screen.height)} -->
         <!-- ></Button> -->
-        <Button onclick={recompile}>Recompile</Button>
+        <Button onclick={recompile}>
+            Recompile
+            <Badge variant="kbd" class="rounded-sm px-1">r</Badge>
+        </Button>
     </div>
 </div>
 

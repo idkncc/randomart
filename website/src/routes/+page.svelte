@@ -59,7 +59,7 @@
         threeEnv.mesh = new THREE.Mesh(geometry);
         threeEnv.scene.add(threeEnv.mesh);
 
-        document.addEventListener("resize", () => {
+        window.addEventListener("resize", () => {
             threeEnv.renderer.setSize(window.innerWidth, window.innerHeight);
 
             threeEnv.uniforms.resolution.value.x =
