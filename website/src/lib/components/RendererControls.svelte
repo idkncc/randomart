@@ -38,7 +38,17 @@
 <div class="controls">
     <div>
         <h1>Randomart</h1>
-        <p>Reimplementation of tsoding's randomart, but in Rust and Web</p>
+        <p>
+            Reimplementation of <a href="https://github.com/tsoding/randomart">
+                Tsoding's randomart
+            </a>, but in Rust and Web
+        </p>
+
+        <ul class="my-2">
+            <li>
+                <a href="https://github.com/idkncc/randomart">Github repo</a>
+            </li>
+        </ul>
     </div>
 
     <div class="flags">

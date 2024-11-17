@@ -1,17 +1,7 @@
 <script lang="ts">
-    import { onMount, setContext } from "svelte";
     import * as THREE from "three";
-    import * as randomart from "randomart";
 
-    import { Button } from "@ui/button";
-    import { Checkbox } from "@ui/checkbox";
-    import { Label } from "@ui/label";
-    import { Slider } from "@ui/slider";
-    import { Input } from "@ui/input";
-    import { Separator } from "@ui/separator";
-
-    import * as Card from "@ui/card";
-    import * as Dialog from "@ui/dialog";
+    import { onMount, setContext } from "svelte";
 
     import RendererControls from "$lib/components/RendererControls.svelte";
 
@@ -36,8 +26,6 @@
         if (threeEnv.uniforms && threeEnv.flags.stopAnimation) {
             threeEnv.uniforms.time.value =
                 Math.PI * (threeEnv.flags.currentFrame / 100);
-
-            console.log(Math.sin(threeEnv.uniforms.time.value));
         }
     });
 
