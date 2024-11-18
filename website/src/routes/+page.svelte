@@ -42,10 +42,8 @@
         threeEnv.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
         threeEnv.clock = new THREE.Clock(true);
 
-        // Create the plane geometry
         var geometry = new THREE.PlaneGeometry(2, 2);
 
-        // Define the shader uniforms
         threeEnv.uniforms = {
             time: new THREE.Uniform(0.0),
             resolution: new THREE.Uniform(
@@ -59,27 +57,29 @@
         threeEnv.mesh = new THREE.Mesh(geometry);
         threeEnv.scene.add(threeEnv.mesh);
 
-        window.addEventListener("resize", () => {
-            threeEnv.renderer.setSize(window.innerWidth, window.innerHeight);
+        function animate() {
+            if (!threeEnv.flags.stopAnimation) {
+                threeEnv.uniforms.time.value = threeEnv.clock.getElapsedTime();
+            }
+            threeEnv.renderer.render(threeEnv.scene, threeEnv.camera);
 
-            threeEnv.uniforms.resolution.value.x =
-                window.innerWidth * window.devicePixelRatio;
-            threeEnv.uniforms.resolution.value.y =
-                window.innerHeight * window.devicePixelRatio;
-        });
+            requestAnimationFrame(animate);
+        }
 
         requestAnimationFrame(animate);
     });
 
-    function animate() {
-        if (!threeEnv.flags.stopAnimation) {
-            threeEnv.uniforms.time.value = threeEnv.clock.getElapsedTime();
-        }
-        threeEnv.renderer.render(threeEnv.scene, threeEnv.camera);
+    function onResize() {
+        threeEnv.renderer.setSize(window.innerWidth, window.innerHeight);
 
-        requestAnimationFrame(animate);
+        threeEnv.uniforms.resolution.value.x =
+            window.innerWidth * window.devicePixelRatio;
+        threeEnv.uniforms.resolution.value.y =
+            window.innerHeight * window.devicePixelRatio;
     }
 </script>
+
+<svelte:window onresize={onResize} />
 
 <div class="randomart">
     <div id="canvas-container" class="absolute left-0 top-0"></div>

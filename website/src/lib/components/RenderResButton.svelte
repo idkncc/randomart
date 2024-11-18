@@ -45,6 +45,6 @@
     }
 </script>
 
-<Button variant="outline" onclick={download}
-    >{title} ({resolution[0]}x{resolution[1]})</Button
->
+<Button variant="outline" onclick={download}>
+    {title} ({resolution[0]}x{resolution[1]})
+</Button>

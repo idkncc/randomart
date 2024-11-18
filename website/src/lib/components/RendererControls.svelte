@@ -89,7 +89,7 @@
             </Card.Header>
 
             <Card.Content>
-                <div class="grid grid-cols-[1fr_3fr_1fr] gap-2">
+                <div class="grid grid-cols-[1fr_3fr_1fr] gap-1">
                     <Button
                         variant="outline"
                         onclick={() => (threeEnv.flags.currentFrame -= 5)}
