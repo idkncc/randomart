@@ -1,4 +1,4 @@
-use crate::{macros::*, prelude::*};
+use crate::{funcs::get_random, macros::*, prelude::*};
 
 const GEN_RULE_MAX_ATTEMPTS: usize = 100;
 
@@ -18,7 +18,7 @@ pub fn gen_rule(grammar: &Grammar, rule: usize, depth: i32) -> Option<Box<Node>>
         }
 
         // [0......][...][...1]
-        let p: f32 = rand::random();
+        let p: f32 = get_random();
         let mut t = 0.0;
 
         for branch in branches {
@@ -35,7 +35,7 @@ pub fn gen_rule(grammar: &Grammar, rule: usize, depth: i32) -> Option<Box<Node>>
 pub fn gen_node(grammar: &Grammar, node: &Node, depth: i32) -> Option<Box<Node>> {
     match node {
         Node::X | Node::Y | Node::T | Node::Number(_) | Node::Boolean(_) => Some(node_clone!(node)),
-        Node::Random => Some(node_number!(rand::random::<f32>() * 2.0 - 1.0)),
+        Node::Random => Some(node_number!(get_random() * 2.0 - 1.0)),
         Node::Rule(rule) => gen_rule(grammar, rule.clone(), depth - 1),
         Node::Sqrt(unop) => {
             let Some(value) = gen_node(grammar, &unop.value, depth) else {

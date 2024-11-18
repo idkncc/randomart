@@ -6,6 +6,7 @@ edition = "2021"
 [lib]
 name = "randomart"
 path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
 
 [[example]]
 name = "image-generation"
@@ -13,7 +14,11 @@ name = "image-generation"
 [[example]]
 name = "compile-shader"
 
-[dependencies]
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 rand = "0.8.5"
 
 [dev-dependencies]

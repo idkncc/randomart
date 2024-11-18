@@ -1,5 +1,8 @@
 //! Module for compiling GL
 
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
 use crate::prelude::*;
 
 pub fn compile_fragment_expression(node: &Node) -> String {
@@ -54,4 +57,42 @@ pub fn compile_fragment_expression(node: &Node) -> String {
             compile_fragment_expression(&iff.elze)
         ),
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn compile_webgl_fragment_shader() -> String {
+    let (grammar, entry) = generate_grammar();
+    let Some(f) = gen_rule(&grammar, entry, 40) else {
+        panic!("Couldn't generate grammar")
+    };
+
+    let mut shader = String::new();
+    shader.push_str(&format!("#define GLSLIFY 1\n"));
+    shader.push_str(&format!("precision highp float;\n"));
+    shader.push_str(&format!("uniform vec2 resolution;\n"));
+    shader.push_str(&format!("uniform float time;\n"));
+    shader.push_str(&format!("\n"));
+    shader.push_str(&format!("vec4 map_color(vec3 rgb) {{\n"));
+    shader.push_str(&format!("    return vec4((rgb + 1.0)/2.0, 1.0);\n"));
+    shader.push_str(&format!("}}\n"));
+    shader.push_str(&format!("\n"));
+    shader.push_str(&format!("void main()\n"));
+    shader.push_str(&format!("{{\n"));
+    shader.push_str(&format!(
+        "    float x = (gl_FragCoord.x/resolution.x)*2.0 - 1.0;\n"
+    ));
+    shader.push_str(&format!(
+        "    float y = (gl_FragCoord.y/resolution.y)*2.0 - 1.0;\n"
+    ));
+    shader.push_str(&format!("    float t = sin(time);\n"));
+    shader.push_str(&format!(
+        "    gl_FragColor = map_color({});\n",
+        compile_fragment_expression(&f)
+    ));
+    // shader.push_str(&format!("    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"));
+
+    shader.push_str(&format!("}}\n"));
+
+    shader
 }

@@ -695,6 +695,7 @@ dependencies = [
  "image",
  "indicatif",
  "rand",
+ "wasm-bindgen",
 ]
 
 [[package]]

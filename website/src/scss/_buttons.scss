@@ -1,0 +1,30 @@
+.btn {
+  @apply px-3 py-2;
+  @apply rounded-lg;
+  @apply transition-all;
+  @apply shadow-lg;
+
+  &.primary {
+    @apply text-stone-200 bg-stone-600 shadow-stone-600;
+
+    &:hover {
+      @apply bg-stone-500 shadow-stone-500 font-semibold;
+    }
+
+    &:active {
+      @apply bg-stone-700 shadow-stone-700;
+    }
+  }
+
+  &.success {
+    @apply text-green-200 bg-green-600 shadow-green-600;
+
+    &:hover {
+      @apply bg-green-500 shadow-green-500 font-semibold;
+    }
+
+    &:active {
+      @apply bg-green-700 shadow-green-700;
+    }
+  }
+}
