@@ -1,0 +1,13 @@
+.randomart {
+  @apply grid grid-cols-[2fr_1fr];
+  @apply bg-background;
+
+  .canvas-container {
+    @apply flex-grow;
+    @apply h-screen;
+  }
+
+  .controls {
+    @apply h-[100dvh];
+  }
+}

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import "./page.scss";
+
     import * as THREE from "three";
 
     import { onMount, setContext } from "svelte";
@@ -30,10 +32,15 @@
     });
 
     onMount(() => {
+        const innerWidth =
+            document.querySelector("#canvas-container")!.clientWidth;
+        const innerHeight =
+            document.querySelector("#canvas-container")!.clientHeight;
+
         threeEnv.renderer = new THREE.WebGLRenderer();
 
         threeEnv.renderer.setPixelRatio(window.devicePixelRatio);
-        threeEnv.renderer.setSize(window.innerWidth, window.innerHeight);
+        threeEnv.renderer.setSize(innerWidth, innerHeight);
 
         var container = document.querySelector("#canvas-container")!;
         container.appendChild(threeEnv.renderer.domElement);
@@ -70,24 +77,23 @@
     });
 
     function onResize() {
-        threeEnv.renderer.setSize(window.innerWidth, window.innerHeight);
+        const innerWidth =
+            document.querySelector("#canvas-container")!.clientWidth;
+        const innerHeight =
+            document.querySelector("#canvas-container")!.clientHeight;
+
+        threeEnv.renderer.setSize(innerWidth, innerHeight);
 
         threeEnv.uniforms.resolution.value.x =
-            window.innerWidth * window.devicePixelRatio;
+            innerWidth * window.devicePixelRatio;
         threeEnv.uniforms.resolution.value.y =
-            window.innerHeight * window.devicePixelRatio;
+            innerHeight * window.devicePixelRatio;
     }
 </script>
 
 <svelte:window onresize={onResize} />
 
 <div class="randomart">
-    <div id="canvas-container" class="absolute left-0 top-0"></div>
+    <div id="canvas-container"></div>
     <RendererControls />
 </div>
-
-<style lang="scss">
-    .randomart {
-        @apply bg-slate-500;
-    }
-</style>

@@ -57,62 +57,75 @@
         <p>
             Reimplementation of <a href="https://github.com/tsoding/randomart">
                 Tsoding's randomart
-            </a>, but in Rust and Web
+            </a>, but in Rust and for Web
         </p>
 
         <ul class="my-2">
             <li>
                 <a href="https://github.com/idkncc/randomart">Github repo</a>
             </li>
+            <li>
+                <a
+                    href="http://users.ece.cmu.edu/~adrian/projects/validation/validation.pdf"
+                >
+                    Hash visualization PDF
+                </a>
+            </li>
         </ul>
     </div>
 
     <div class="flags">
-        <div class="flex items-center space-x-2">
-            <Checkbox
-                id="stop-animation"
-                bind:checked={threeEnv.flags.stopAnimation}
-            />
-            <Label for="stop-animation">
+        <div class="flex flex-col gap-2">
+            <Button
+                class="w-full"
+                variant={threeEnv.flags.stopAnimation ? "default" : "secondary"}
+                onclick={() =>
+                    (threeEnv.flags.stopAnimation =
+                        !threeEnv.flags.stopAnimation)}
+            >
                 Pause
                 <Badge variant="kbd" class="rounded-sm px-1">p</Badge>
-            </Label>
+            </Button>
+            <Card.Root
+                class={`${threeEnv.flags.stopAnimation ? "flex" : "hidden"} w-full flex-col gap-1.5`}
+            >
+                <Card.Header>
+                    <Card.Title level={2}>
+                        <code>t</code> variable (in percents of PI)
+                    </Card.Title>
+                </Card.Header>
+
+                <Card.Content>
+                    <div class="grid grid-cols-[1fr_3fr_1fr] gap-1">
+                        <Button
+                            variant="outline"
+                            onclick={() => (threeEnv.flags.currentFrame -= 5)}
+                        >
+                            -5
+                        </Button>
+                        <Input
+                            type="number"
+                            id="current-frame"
+                            placeholder="0-100"
+                            min={0}
+                            max={100}
+                            bind:value={threeEnv.flags.currentFrame}
+                        />
+                        <Button
+                            variant="outline"
+                            onclick={() => (threeEnv.flags.currentFrame += 5)}
+                        >
+                            +5
+                        </Button>
+                    </div>
+                </Card.Content>
+            </Card.Root>
         </div>
 
-        <Card.Root
-            class={`${threeEnv.flags.stopAnimation ? "flex" : "hidden"} w-full flex-col gap-1.5`}
-        >
-            <Card.Header>
-                <Card.Title level={2}>
-                    <code>t</code> variable (in percents of PI)
-                </Card.Title>
-            </Card.Header>
-
-            <Card.Content>
-                <div class="grid grid-cols-[1fr_3fr_1fr] gap-1">
-                    <Button
-                        variant="outline"
-                        onclick={() => (threeEnv.flags.currentFrame -= 5)}
-                    >
-                        -5
-                    </Button>
-                    <Input
-                        type="number"
-                        id="current-frame"
-                        placeholder="0-100"
-                        min={0}
-                        max={100}
-                        bind:value={threeEnv.flags.currentFrame}
-                    />
-                    <Button
-                        variant="outline"
-                        onclick={() => (threeEnv.flags.currentFrame += 5)}
-                    >
-                        +5
-                    </Button>
-                </div>
-            </Card.Content>
-        </Card.Root>
+        <Button variant="secondary" disabled>
+            Custom Grammar
+            <Badge variant="outline">maybe in da future</Badge>
+        </Button>
     </div>
 
     <div class="flex-grow"></div>
@@ -174,10 +187,7 @@
 <style lang="scss">
     .controls {
         @apply flex flex-col;
-
-        @apply absolute top-0 right-0 p-4;
-        @apply min-w-[300px] w-[30vw] max-w-[800px] h-[100dvh] z-10;
-        @apply bg-background/80 backdrop-blur-3xl;
+        @apply bg-background p-4;
 
         .flags {
             @apply my-3;
