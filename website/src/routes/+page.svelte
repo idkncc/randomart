@@ -32,10 +32,9 @@
     });
 
     onMount(() => {
-        const innerWidth =
-            document.querySelector("#canvas-container")!.clientWidth;
+        const innerWidth = document.querySelector("#canvas-size")!.clientWidth;
         const innerHeight =
-            document.querySelector("#canvas-container")!.clientHeight;
+            document.querySelector("#canvas-size")!.clientHeight;
 
         threeEnv.renderer = new THREE.WebGLRenderer();
 
@@ -44,6 +43,10 @@
 
         var container = document.querySelector("#canvas-container")!;
         container.appendChild(threeEnv.renderer.domElement);
+
+        threeEnv.renderer.domElement.style.position = "absolute";
+        threeEnv.renderer.domElement.style.top = `${document.querySelector("#canvas-size")!.clientTop}px`;
+        threeEnv.renderer.domElement.style.left = `${document.querySelector("#canvas-size")!.clientLeft}px`;
 
         threeEnv.scene = new THREE.Scene();
         threeEnv.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -77,10 +80,9 @@
     });
 
     function onResize() {
-        const innerWidth =
-            document.querySelector("#canvas-container")!.clientWidth;
+        const innerWidth = document.querySelector("#canvas-size")!.clientWidth;
         const innerHeight =
-            document.querySelector("#canvas-container")!.clientHeight;
+            document.querySelector("#canvas-size")!.clientHeight;
 
         threeEnv.renderer.setSize(innerWidth, innerHeight);
 
@@ -94,6 +96,8 @@
 <svelte:window onresize={onResize} />
 
 <div class="randomart">
-    <div id="canvas-container"></div>
+    <div id="canvas-size"></div>
     <RendererControls />
 </div>
+
+<div id="canvas-container"></div>
