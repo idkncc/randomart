@@ -165,6 +165,7 @@
                         title="Full HD"
                         resolution={[1920, 1080]}
                     />
+                    <RenderResButton title="Square" resolution={[1024, 1024]} />
 
                     <Button variant="outline" disabled>
                         Custom
