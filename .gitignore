@@ -10,6 +10,9 @@ build
 /target
 /pkg
 
+# randomart
+randomart.png
+
 # OS
 .DS_Store
 Thumbs.db
