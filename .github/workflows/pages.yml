@@ -28,6 +28,10 @@ jobs:
         working-directory: ./website
         run: bun run build
 
+      - name: Copy CNAME to deployment
+        working-directory: ./website
+        run: cp ../CNAME build/
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
