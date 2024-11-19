@@ -28,9 +28,11 @@ jobs:
         working-directory: ./website
         run: bun run build
 
-      - name: Copy CNAME to deployment
+      - name: Deployment requirements
         working-directory: ./website
-        run: cp ../CNAME build/
+        run: |
+          cp ../CNAME build/
+          touch build/.nojekyll
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
