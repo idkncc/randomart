@@ -38,7 +38,7 @@ You can view deployed example at [https://randomart.idkncc.ru/]
   cd website
   bun install # or `npm install` or whatever
 
-  bun dev # development
+  bun run dev # development
   # or
-  bun build # production (static)
+  bun run build # production (static)
   ```
