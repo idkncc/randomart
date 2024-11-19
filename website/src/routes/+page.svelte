@@ -8,6 +8,7 @@
     import RendererControls from "$lib/components/RendererControls.svelte";
 
     import type { ThreeEnv } from "$lib/typings";
+    import { getCanvasDimensions } from "$lib/threeUtils";
 
     let threeEnv = $state<ThreeEnv>({
         renderer: undefined!,
@@ -32,21 +33,22 @@
     });
 
     onMount(() => {
-        const innerWidth = document.querySelector("#canvas-size")!.clientWidth;
-        const innerHeight =
-            document.querySelector("#canvas-size")!.clientHeight;
+        const canvasDimensions = getCanvasDimensions();
 
         threeEnv.renderer = new THREE.WebGLRenderer();
 
         threeEnv.renderer.setPixelRatio(window.devicePixelRatio);
-        threeEnv.renderer.setSize(innerWidth, innerHeight);
+        threeEnv.renderer.setSize(
+            canvasDimensions.width,
+            canvasDimensions.height,
+        );
 
         var container = document.querySelector("#canvas-container")!;
         container.appendChild(threeEnv.renderer.domElement);
 
         threeEnv.renderer.domElement.style.position = "absolute";
-        threeEnv.renderer.domElement.style.top = `${document.querySelector("#canvas-size")!.clientTop}px`;
-        threeEnv.renderer.domElement.style.left = `${document.querySelector("#canvas-size")!.clientLeft}px`;
+        threeEnv.renderer.domElement.style.top = `${canvasDimensions.top}px`;
+        threeEnv.renderer.domElement.style.left = `${canvasDimensions.left}px`;
 
         threeEnv.scene = new THREE.Scene();
         threeEnv.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -58,8 +60,8 @@
             time: new THREE.Uniform(0.0),
             resolution: new THREE.Uniform(
                 new THREE.Vector2(
-                    threeEnv.renderer.domElement.offsetWidth,
-                    threeEnv.renderer.domElement.offsetHeight,
+                    canvasDimensions.width,
+                    canvasDimensions.height,
                 ).multiplyScalar(window.devicePixelRatio),
             ),
         };

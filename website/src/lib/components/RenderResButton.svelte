@@ -6,6 +6,7 @@
     import { Button } from "@ui/button";
 
     import type { ThreeEnv } from "$lib/typings";
+    import { getCanvasDimensions } from "$lib/threeUtils";
 
     interface Props {
         title: string;
@@ -17,12 +18,6 @@
     const threeEnv = getContext<ThreeEnv>("threeEnv");
 
     function download() {
-        // Copy old sizes
-        const ogSizes = new THREE.Vector2();
-        const ogResolution = new THREE.Vector2();
-        threeEnv.renderer.getSize(ogSizes);
-        threeEnv.uniforms.resolution.value.copy(ogResolution);
-
         // Set target sizes
         threeEnv.renderer.setPixelRatio(1);
         threeEnv.renderer.setSize(resolution[0], resolution[1]);
@@ -47,9 +42,16 @@
         link.click();
 
         // Restore back sizes
+        const canvasDimensions = getCanvasDimensions();
         threeEnv.renderer.setPixelRatio(window.devicePixelRatio);
-        threeEnv.renderer.setSize(ogSizes.x, ogSizes.y);
-        ogResolution.copy(threeEnv.uniforms.resolution.value);
+        threeEnv.renderer.setSize(
+            canvasDimensions.width,
+            canvasDimensions.height,
+        );
+        threeEnv.uniforms.resolution.value.x =
+            canvasDimensions.width * window.devicePixelRatio;
+        threeEnv.uniforms.resolution.value.y =
+            canvasDimensions.height * window.devicePixelRatio;
     }
 </script>
 
